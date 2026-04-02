@@ -2,7 +2,6 @@ import { Server, Cpu, Database, Activity, HardDrive, RefreshCcw, Network, Plus, 
 import { Button } from "../components/ui/button"
 import { useEffect, useState } from "react"
 import api from "../lib/api"
-import { useStore } from "../stores/useStore"
 import { usePlatform } from "../hooks/usePlatform"
 import { cn } from "../lib/utils"
 
@@ -15,7 +14,6 @@ export function ServerNodes() {
   const [isGeneratingCode, setIsGeneratingCode] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  const { isFeatureUnlocked } = useStore()
   const { isDesktop } = usePlatform()
   
   // Desktop-specific local monitoring state
