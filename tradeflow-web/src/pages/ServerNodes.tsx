@@ -1,4 +1,4 @@
-import { Server, Cpu, Database, Activity, HardDrive, RefreshCcw, Network, ShieldCheck, Plus, X, Copy, CheckCircle2, Zap } from "lucide-react"
+import { Server, Cpu, Database, Activity, HardDrive, RefreshCcw, Network, Plus, X, Copy, CheckCircle2, Zap } from "lucide-react"
 import { Button } from "../components/ui/button"
 import { useEffect, useState } from "react"
 import api from "../lib/api"
@@ -17,7 +17,6 @@ export function ServerNodes() {
 
   const { isFeatureUnlocked } = useStore()
   const { isDesktop } = usePlatform()
-  const isMultiNodeUnlocked = isFeatureUnlocked("multi_node")
   
   // Desktop-specific local monitoring state
   const [localStats, setLocalStats] = useState<any>(null)

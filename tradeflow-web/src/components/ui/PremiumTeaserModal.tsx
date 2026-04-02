@@ -1,4 +1,4 @@
-import { X, Lock, Zap, ShieldCheck, ChevronRight, ShoppingBag, Sparkles } from "lucide-react"
+import { X, Lock, ShieldCheck, ChevronRight, ShoppingBag, Sparkles } from "lucide-react"
 import { Button } from "./button"
 import { cn } from "../../lib/utils"
 import { useNavigate } from "react-router-dom"

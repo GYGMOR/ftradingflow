@@ -16,7 +16,8 @@ import {
   BrainCircuit,
   Lock,
   Cpu,
-  History
+  History,
+  MonitorDown
 } from "lucide-react"
 import { cn } from "../../lib/utils"
 import { useStore } from "../../stores/useStore"
@@ -24,7 +25,6 @@ import { Switch } from "../ui/switch"
 import { useState } from "react"
 import { PremiumTeaserModal } from "../ui/PremiumTeaserModal"
 import { usePlatform } from "../../hooks/usePlatform"
-import { MonitorDown } from "lucide-react"
 
 const navItems = {
   standard: [
@@ -59,7 +59,7 @@ const SIDEBAR_ENTITLEMENTS: Record<string, string> = {
 }
 
 export function Sidebar() {
-  const { isDark, toggleTheme, botActive, isSidebarCollapsed, toggleSidebar, purchasedWidgets, user, logout } = useStore()
+  const { isDark, toggleTheme, botActive, isSidebarCollapsed, toggleSidebar, user, logout } = useStore()
   const { isWeb } = usePlatform()
   const [teaserData, setTeaserData] = useState<{ open: boolean; name: string; tier: "PRO" | "ELITE" }>({
     open: false,
