@@ -24,7 +24,7 @@ struct AppState {
 #[tauri::command]
 fn get_system_stats(state: tauri::State<AppState>) -> SystemStats {
     let mut sys = state.system.lock().unwrap();
-    sys.refresh_cpu_all();
+    sys.refresh_cpu_usage();
     sys.refresh_memory();
 
     SystemStats {
@@ -39,10 +39,10 @@ fn get_system_stats(state: tauri::State<AppState>) -> SystemStats {
 #[tauri::command]
 fn check_bot_status(state: tauri::State<AppState>, process_name: &str) -> ProcessStatus {
     let mut sys = state.system.lock().unwrap();
-    sys.refresh_processes(sysinfo::ProcessesToRefresh::All);
+    sys.refresh_processes();
 
     for (pid, process) in sys.processes() {
-        if process.name().to_string_lossy().contains(process_name) {
+        if process.name().to_lowercase().contains(&process_name.to_lowercase()) {
             return ProcessStatus {
                 is_running: true,
                 pid: pid.as_u32(),
