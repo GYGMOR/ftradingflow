@@ -1,7 +1,4 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-
-use sysinfo::{CpuExt, System, SystemExt, ProcessExt};
+use sysinfo::System;
 use serde::{Serialize, Deserialize};
 use std::sync::{Arc, Mutex};
 
@@ -27,14 +24,14 @@ struct AppState {
 #[tauri::command]
 fn get_system_stats(state: tauri::State<AppState>) -> SystemStats {
     let mut sys = state.system.lock().unwrap();
-    sys.refresh_cpu();
+    sys.refresh_cpu_all();
     sys.refresh_memory();
 
     SystemStats {
         cpu_usage: sys.global_cpu_info().cpu_usage(),
         ram_usage: (sys.used_memory() as f32 / (1024 * 1024 * 1024) as f32), // GB
         ram_total: (sys.total_memory() as f32 / (1024 * 1024 * 1024) as f32), // GB
-        os_name: sys.name().unwrap_or_else(|| "Unknown".into()),
+        os_name: System::name().unwrap_or_else(|| "Unknown".into()),
     }
 }
 
@@ -42,13 +39,13 @@ fn get_system_stats(state: tauri::State<AppState>) -> SystemStats {
 #[tauri::command]
 fn check_bot_status(state: tauri::State<AppState>, process_name: &str) -> ProcessStatus {
     let mut sys = state.system.lock().unwrap();
-    sys.refresh_processes();
+    sys.refresh_processes(sysinfo::ProcessesToRefresh::All);
 
-    for (_pid, process) in sys.processes() {
-        if process.name().contains(process_name) {
+    for (pid, process) in sys.processes() {
+        if process.name().to_string_lossy().contains(process_name) {
             return ProcessStatus {
                 is_running: true,
-                pid: _pid.as_u32(),
+                pid: pid.as_u32(),
             };
         }
     }
