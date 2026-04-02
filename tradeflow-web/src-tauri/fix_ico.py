@@ -1,19 +1,28 @@
 import struct
 
 ico_path = r"D:\Joel\trading-web\tradeflow-web\src-tauri\icons\icon.ico"
-
-# 32x32 icon, 32 bits per pixel (BGRA)
 width = 32
 height = 32
 
 # Build XOR mask (pixel data)
-# We'll make a solid indigo block (TradeFlow color: #6366f1 -> BGRA: f1 66 63 ff)
+# Indigo: #6366f1 (BGRA: f1 66 63 ff)
+# White: #ffffff (BGRA: ff ff ff ff)
+indigo = [0xf1, 0x66, 0x63, 0xff]
+white = [0xff, 0xff, 0xff, 0xff]
+
 pixel_data = bytearray()
-for _ in range(width * height):
-    pixel_data.extend([0xf1, 0x66, 0x63, 0xff])
+for y in range(height):
+    for x in range(width):
+        # Draw a simple white "T" shape
+        is_t = (y >= 6 and y <= 10 and x >= 8 and x <= 24) or \
+               (x >= 14 and x <= 18 and y >= 11 and y <= 26)
+        
+        if is_t:
+            pixel_data.extend(white)
+        else:
+            pixel_data.extend(indigo)
 
 # Build AND mask (transparency - 0 means opaque)
-# 32x32 bits = 1024 bits = 128 bytes
 and_mask = bytearray([0x00] * 128)
 
 # BITMAPINFOHEADER (40 bytes)
@@ -34,7 +43,6 @@ bih = struct.pack(
 icondir = struct.pack("<HHH", 0, 1, 1)
 
 # ICONDIRENTRY (16 bytes)
-# Size is bih + pixel_data + and_mask
 image_size = len(bih) + len(pixel_data) + len(and_mask)
 iconentry = struct.pack(
     "BBBBHHII",
@@ -51,4 +59,4 @@ with open(ico_path, "wb") as f:
     f.write(pixel_data)
     f.write(and_mask)
 
-print(f"✅ Created a legacy-compatible 32x32 BMP-encoded ICO at {ico_path}")
+print(f"✅ Created a stylized 'T' icon at {ico_path}")
