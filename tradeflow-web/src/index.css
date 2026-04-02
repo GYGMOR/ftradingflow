@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%; /* Soft Off-White/Gray */
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-hover: 248 250 252;      /* Custom hover light */
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    --primary: 221 83% 53%; /* TradeFlow Blue */
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11.2%;
+    
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47% 11.2%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214.3 31.8% 91.4%;
+    --border-active: 59 130 246;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 1rem;
+
+    --sidebar-bg: 210 40% 96%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-collapsed-width: 80px;
+    --titlebar-height: 0px; /* Default Web */
+    --tf-glass: rgba(255, 255, 255, 0.7);
+
+    --success: 0 200 150;           /* #00C896 */
+    --warning: 245 158 11;          /* #F59E0B */
+    --info: 6 182 212;              /* #06B6D4 */
+    --ai: 139 92 246;               /* #8B5CF6 */
+  }
+
+  /* Desktop Overrides */
+  [data-platform="desktop"] {
+    --titlebar-height: 40px;
+  }
+
+  .dark {
+    --background: 11 14 23;         /* #0B0E17 */
+    --foreground: 232 234 246;      /* #E8EAF6 */
+    
+    --card: 20 24 39;               /* #141827 */
+    --card-hover: 26 32 53;         /* #1A2035 */
+    --card-foreground: 232 234 246;
+    
+    --popover: 20 24 39;
+    --popover-foreground: 232 234 246;
+    
+    --primary: 59 130 246;          /* #3B82F6 */
+    --primary-foreground: 255 255 255;
+    
+    --secondary: 136 146 176;       /* #8892B0 (Sekundär Text) */
+    --secondary-foreground: 232 234 246;
+    
+    --muted: 26 32 53;              /* #1A2035 */
+    --muted-foreground: 74 83 128;  /* #4A5380 (Dimmed Text) */
+    
+    --accent: 26 32 53;
+    --accent-foreground: 59 130 246;
+    
+    --destructive: 255 71 87;       /* #FF4757 */
+    --destructive-foreground: 255 255 255;
+    
+    --border: 30 39 64;             /* #1E2740 */
+    --border-active: 45 63 107;     /* #2D3F6B */
+    --input: 30 39 64;
+    --ring: 59 130 246;
+
+    --sidebar-bg: 26 32 53;         /* #1A2035 */
+    
+    --success: 0 200 150;           /* #00C896 */
+    --warning: 245 158 11;          /* #F59E0B */
+    --info: 6 182 212;              /* #06B6D4 */
+    --ai: 139 92 246;               /* #8B5CF6 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--titlebar-height);
+    /* Removed the explicit radial gradient from previous version as per 'wie ein echtes professionelles Terminal' requirement. We want clean slate layouts. */
+  }
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/60;
+}

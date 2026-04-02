@@ -1,0 +1,374 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  TRIAL
+  STANDARD
+  PREMIUM
+  PUBLISHER
+  ADMIN
+}
+
+enum ProductType {
+  STRATEGY
+  BUNDLE
+  DASHBOARD_PACK
+  RISK_PACK
+  LAYOUT_PACK
+  WIDGET_PACK
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum BotStatus {
+  IDLE
+  RUNNING
+  PAUSED
+  ERROR
+  MAINTENANCE
+}
+
+enum NotificationType {
+  TRADE
+  WARNING
+  INFO
+  SYSTEM
+  AI
+}
+
+model User {
+  id            String    @id @default(uuid()) @db.Uuid
+  email         String    @unique
+  fullName      String?   @map("full_name")
+  passwordHash  String    @map("password_hash")
+  role          UserRole  @default(TRIAL)
+  avatarUrl     String?   @map("avatar_url")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @default(now()) @map("updated_at")
+
+  // Relationships
+  entitlements  UserEntitlement[]
+  purchases     UserPurchase[]
+  layouts       UserDashboardLayout[]
+  activeWidgets UserActiveWidget[]
+  settings      UserSettings?
+  exchanges     ExchangeConnection[]
+  nodes         BotNode[]
+  trades        TradeHistory[]
+  journalCards  JournalEntry[]
+  snapshots     AnalyticsSnapshot[]
+  auditLogs     AuditLog[]
+  pairingTokens NodePairingToken[]
+
+  @@map("users")
+}
+
+model StoreProduct {
+  id           String        @id @default(uuid()) @db.Uuid
+  sku          String        @unique
+  name         String
+  type         ProductType
+  description  String?
+  priceChf     Decimal       @map("price_chf") @db.Decimal(10, 2)
+  oldPriceChf  Decimal?      @map("old_price_chf") @db.Decimal(10, 2)
+  badge        String?
+  isActive     Boolean       @default(true) @map("is_active")
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  // Relationships
+  bundles      BundleItem[]  @relation("BundleOf")
+  bundleItems  BundleItem[]  @relation("PartOfBundle")
+  entitlements ProductEntitlement[]
+  purchasedBy  PurchaseItem[]
+
+  @@map("store_products")
+}
+
+model BundleItem {
+  bundleId  String @map("bundle_id") @db.Uuid
+  productId String @map("product_id") @db.Uuid
+
+  bundle    StoreProduct @relation("BundleOf", fields: [bundleId], references: [id])
+  product   StoreProduct @relation("PartOfBundle", fields: [productId], references: [id])
+
+  @@id([bundleId, productId])
+  @@map("bundle_items")
+}
+
+model Entitlement {
+  id          String    @id @default(uuid()) @db.Uuid
+  code        String    @unique
+  name        String
+  description String?
+
+  products    ProductEntitlement[]
+  users       UserEntitlement[]
+
+  @@map("entitlements")
+}
+
+model ProductEntitlement {
+  productId     String @map("product_id") @db.Uuid
+  entitlementId String @map("entitlement_id") @db.Uuid
+
+  product       StoreProduct @relation(fields: [productId], references: [id])
+  entitlement   Entitlement  @relation(fields: [entitlementId], references: [id])
+
+  @@id([productId, entitlementId])
+  @@map("product_entitlements")
+}
+
+model UserEntitlement {
+  userId        String    @map("user_id") @db.Uuid
+  entitlementId String    @map("entitlement_id") @db.Uuid
+  grantedAt     DateTime  @default(now()) @map("granted_at")
+  expiresAt     DateTime? @map("expires_at")
+
+  user          User        @relation(fields: [userId], references: [id])
+  entitlement   Entitlement @relation(fields: [entitlementId], references: [id])
+
+  @@id([userId, entitlementId])
+  @@map("user_entitlements")
+}
+
+model UserPurchase {
+  id                String       @id @default(uuid()) @db.Uuid
+  userId            String       @map("user_id") @db.Uuid
+  totalAmount       Decimal      @map("total_amount") @db.Decimal(10, 2)
+  status            OrderStatus  @default(PENDING)
+  paymentProviderId String?      @map("payment_provider_id")
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  user              User           @relation(fields: [userId], references: [id])
+  items             PurchaseItem[]
+
+  @@map("user_purchases")
+}
+
+model PurchaseItem {
+  purchaseId      String @map("purchase_id") @db.Uuid
+  productId       String @map("product_id") @db.Uuid
+  priceAtPurchase Decimal @map("price_at_purchase") @db.Decimal(10, 2)
+
+  purchase        UserPurchase @relation(fields: [purchaseId], references: [id])
+  product         StoreProduct @relation(fields: [productId], references: [id])
+
+  @@id([purchaseId, productId])
+  @@map("purchase_items")
+}
+
+model UserDashboardLayout {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  sceneName    String   @map("scene_name")
+  layoutData   Json     @map("layout_data")
+  isActive     Boolean  @default(false) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @map("updated_at")
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, sceneName])
+  @@map("user_dashboard_layouts")
+}
+
+model UserActiveWidget {
+  userId    String @map("user_id") @db.Uuid
+  widgetId  String @map("widget_id")
+  sceneName String @map("scene_name")
+
+  user      User   @relation(fields: [userId], references: [id])
+
+  @@id([userId, widgetId, sceneName])
+  @@map("user_active_widgets")
+}
+
+model UserSettings {
+  userId                     String   @id @map("user_id") @db.Uuid
+  theme                      String   @default("dark")
+  timezone                   String   @default("Europe/Zurich")
+  language                   String   @default("de")
+  riskMaxDailyLoss           Decimal? @map("risk_max_daily_loss") @db.Decimal(10, 2)
+  riskMaxTradePercent        Decimal? @map("risk_max_trade_percent") @db.Decimal(5, 2)
+  notificationsTelegramId    String?  @map("notifications_telegram_id")
+  notificationsDiscordWebhook String? @map("notifications_discord_webhook")
+  updatedAt                  DateTime @default(now()) @map("updated_at")
+
+  user                       User     @relation(fields: [userId], references: [id])
+
+  @@map("user_settings")
+}
+
+model ExchangeConnection {
+  id                 String    @id @default(uuid()) @db.Uuid
+  userId             String    @map("user_id") @db.Uuid
+  exchangeName       String    @map("exchange_name")
+  apiKeyMasked       String    @map("api_key_masked")
+  apiSecretEncrypted String    @map("api_secret_encrypted")
+  isActive           Boolean   @default(true) @map("is_active")
+  lastTestAt         DateTime? @map("last_test_at")
+
+  user               User      @relation(fields: [userId], references: [id])
+
+  @@map("exchange_connections")
+}
+
+model BotNode {
+  id              String    @id @default(uuid()) @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
+  nodeName        String    @map("node_name")
+  hostname        String?   @map("hostname")
+  nodeType        String?   @map("node_type") @default("VPS")
+  os              String?   @default("Linux")
+  status          BotStatus @default(IDLE)
+  runtimeVersion  String?   @map("runtime_version")
+  ipAddress       String?   @map("ip_address")
+  lastHeartbeat   DateTime? @map("last_heartbeat")
+  enrolledAt      DateTime? @default(now()) @map("enrolled_at")
+  
+  cpuModel        String?   @map("cpu_model")
+  totalRamGb      Float?    @map("total_ram_gb")
+  totalDiskGb     Float?    @map("total_disk_gb")
+
+  user            User            @relation(fields: [userId], references: [id])
+  trades          TradeHistory[]
+  metrics         BotNodeMetric[]
+  processes       BotNodeProcess[]
+  tokens          NodeToken[]
+
+  @@map("bot_nodes")
+}
+
+model NodePairingToken {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  code      String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([code])
+  @@map("node_pairing_tokens")
+}
+
+model NodeToken {
+  id           String   @id @default(uuid()) @db.Uuid
+  nodeId       String   @map("node_id") @db.Uuid
+  tokenHash    String   @map("token_hash")
+  lastUsedAt   DateTime @default(now()) @map("last_used_at")
+  expiresAt    DateTime @map("expires_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  node         BotNode  @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@index([nodeId])
+  @@map("node_tokens")
+}
+
+model BotNodeProcess {
+  id          String   @id @default(uuid()) @db.Uuid
+  nodeId      String   @map("node_id") @db.Uuid
+  processName String   @map("process_name")
+  pid         Int
+  cpuUsage    Float    @map("cpu_usage")
+  ramUsage    Float    @map("ram_usage")
+  status      String   @default("running")
+  uptime      Int?     @map("uptime")
+  timestamp   DateTime @default(now())
+
+  node        BotNode  @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@index([nodeId])
+  @@map("bot_node_processes")
+}
+
+model BotNodeMetric {
+  id          String   @id @default(uuid()) @db.Uuid
+  nodeId      String   @map("node_id") @db.Uuid
+  cpuUsage    Float    @map("cpu_usage")
+  ramUsage    Float    @map("ram_usage")
+  diskUsage   Float?   @map("disk_usage")
+  latencyMs   Int?     @map("latency_ms")
+  timestamp   DateTime @default(now()) @map("timestamp")
+
+  node        BotNode  @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+
+  @@index([nodeId, timestamp])
+  @@map("bot_node_metrics")
+}
+
+model TradeHistory {
+  id           String    @id @default(uuid()) @db.Uuid
+  userId       String    @map("user_id") @db.Uuid
+  nodeId       String    @map("node_id") @db.Uuid
+  symbol       String
+  side         String
+  entryPrice   Decimal?  @map("entry_price") @db.Decimal(20, 8)
+  exitPrice    Decimal?  @map("exit_price") @db.Decimal(20, 8)
+  quantity     Decimal?  @db.Decimal(20, 8)
+  pnlChf       Decimal?  @map("pnl_chf") @db.Decimal(15, 2)
+  pnlPercent   Decimal?  @map("pnl_percent") @db.Decimal(10, 4)
+  openedAt     DateTime? @map("opened_at")
+  closedAt     DateTime? @map("closed_at")
+  strategyId   String?   @map("strategy_id")
+
+  user         User      @relation(fields: [userId], references: [id])
+  node         BotNode   @relation(fields: [nodeId], references: [id])
+  journalEntry JournalEntry?
+
+  @@map("trade_history")
+}
+
+model JournalEntry {
+  id            String   @id @default(uuid()) @db.Uuid
+  tradeId       String   @unique @map("trade_id") @db.Uuid
+  userId        String   @map("user_id") @db.Uuid
+  note          String?
+  mood          String?
+  screenshotUrl String?  @map("screenshot_url")
+  aiDecisionLog String?  @map("ai_decision_log")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  trade         TradeHistory @relation(fields: [tradeId], references: [id])
+  user          User         @relation(fields: [userId], references: [id])
+
+  @@map("journal_entries")
+}
+
+model AnalyticsSnapshot {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @map("user_id") @db.Uuid
+  snapshotDate DateTime @map("snapshot_date") @db.Date
+  totalBalance Decimal? @map("total_balance") @db.Decimal(15, 2)
+  dailyPnl     Decimal? @map("daily_pnl") @db.Decimal(15, 2)
+  maxDrawdown  Decimal? @map("max_drawdown") @db.Decimal(10, 4)
+  winRate      Decimal? @map("win_rate") @db.Decimal(5, 2)
+
+  user         User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, snapshotDate])
+  @@map("analytics_snapshots")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @map("user_id") @db.Uuid
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User?    @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}

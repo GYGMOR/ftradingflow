@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: tradeflow-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-Trade-Flow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-Init1234!}
+      POSTGRES_DB: ${POSTGRES_DB:-trade-flow}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  tradeflow-server:
+    build: 
+      context: ./tradeflow-server
+      dockerfile: Dockerfile
+    container_name: tradeflow-server
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-Trade-Flow}:${POSTGRES_PASSWORD:-Init1234!}@db:5432/${POSTGRES_DB:-trade-flow}?schema=public
+      JWT_SECRET: ${JWT_SECRET:-super-secret-tradeflow-key-2026-v1}
+      PORT: 5000
+      FRONTEND_URL: http://localhost
+    depends_on:
+      - db
+
+  tradeflow-web:
+    build: 
+      context: ./tradeflow-web
+      dockerfile: Dockerfile
+    container_name: tradeflow-web
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - tradeflow-server
+
+volumes:
+  postgres_data:

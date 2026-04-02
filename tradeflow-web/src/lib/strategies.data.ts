@@ -1,0 +1,347 @@
+export type StrategyTier = "BASIC" | "PRO" | "ELITE";
+export type StrategyCategory = "Trend Following" | "Mean Reversion" | "Breakout" | "Momentum" | "Scalping" | "Volume" | "Swing" | "AI / Scalp" | "AI / Trend" | "AI / Reversal" | "AI / OrderFlow" | "AI / Momentum" | "AI / Dynamic";
+
+export interface StrategyModel {
+  id: string;
+  name: string;
+  tier: StrategyTier;
+  priceCHF: number;
+  category: StrategyCategory;
+  description: string;
+  riskLevel: "Low" | "Medium" | "High";
+  recommendedMarkets: string;
+  timeframe: string;
+  winRate: number;
+  avgDrawdown: string;
+  tradesCount: number;
+  highlights: string;
+  isAI: boolean;
+}
+
+export const strategiesList: StrategyModel[] = [
+  // 10 CHF / BASIC TIER (7 Strategies)
+  {
+    id: "strat-ema-10",
+    name: "EMA Cross Starter",
+    tier: "BASIC",
+    priceCHF: 10,
+    category: "Trend Following",
+    description: "Simpel & effektiv. Der klassische Trend-Rider für sichere Krypto-Einstiege.",
+    riskLevel: "Low",
+    recommendedMarkets: "BTC, ETH",
+    timeframe: "1H",
+    winRate: 58.2,
+    avgDrawdown: "-4.5%",
+    tradesCount: 340,
+    highlights: "Perfekter Einstieg in den Krypto-Trend.",
+    isAI: false
+  },
+  {
+    id: "strat-rsi-10",
+    name: "RSI Pullback Lite",
+    tier: "BASIC",
+    priceCHF: 10,
+    category: "Mean Reversion",
+    description: "Fängt kleine Dips in Bullenmärkten sicher auf. Optimal für Seitwärtsphasen.",
+    riskLevel: "Medium",
+    recommendedMarkets: "Top 10",
+    timeframe: "15m",
+    winRate: 62.1,
+    avgDrawdown: "-6.2%",
+    tradesCount: 890,
+    highlights: "Sehr konstante Performance in flachen Märkten.",
+    isAI: false
+  },
+  {
+    id: "strat-break-10",
+    name: "Breakout Entry Basic",
+    tier: "BASIC",
+    priceCHF: 10,
+    category: "Breakout",
+    description: "Handelt den Ausbruch aus Konsolidierungszonen. Stark bei hohem Volumen.",
+    riskLevel: "Medium",
+    recommendedMarkets: "BNB, SOL",
+    timeframe: "4H",
+    winRate: 55.4,
+    avgDrawdown: "-8.1%",
+    tradesCount: 412,
+    highlights: "Generiert wenige, aber sehr große Swings.",
+    isAI: false
+  },
+  {
+    id: "strat-snap-10",
+    name: "Volatility Snap",
+    tier: "BASIC",
+    priceCHF: 10,
+    category: "Momentum",
+    description: "Nutzt Bollinger-Band-Engepunkte für schnelle Momentum-Trades.",
+    riskLevel: "High",
+    recommendedMarkets: "Volatile Coins",
+    timeframe: "5m",
+    winRate: 65.8,
+    avgDrawdown: "-12.0%",
+    tradesCount: 1540,
+    highlights: "Schwingt mit High-Beta-Kryptowährungen mit.",
+    isAI: false
+  },
+  {
+    id: "strat-pulse-10",
+    name: "Trend Pulse Entry",
+    tier: "BASIC",
+    priceCHF: 10,
+    category: "Trend Following",
+    description: "Langfristige Setup-Filter. Sehr wenige, aber hochprofitable Trades.",
+    riskLevel: "Low",
+    recommendedMarkets: "BTC",
+    timeframe: "1D",
+    winRate: 54.0,
+    avgDrawdown: "-5.0%",
+    tradesCount: 95,
+    highlights: "Ideal für konservative Portfolios.",
+    isAI: false
+  },
+  {
+    id: "strat-scalp-10",
+    name: "Scalping Core",
+    tier: "BASIC",
+    priceCHF: 10,
+    category: "Scalping",
+    description: "Konstante Micro-Gewinne. Sehr schnelles Rein-Raus-System.",
+    riskLevel: "High",
+    recommendedMarkets: "BTC, EUR/USD",
+    timeframe: "1m",
+    winRate: 71.2,
+    avgDrawdown: "-15.5%",
+    tradesCount: 8450,
+    highlights: "Hunderte Trades pro Tag für Non-Stop-Action.",
+    isAI: false
+  },
+  {
+    id: "strat-vol-10",
+    name: "Volume Spike Basic",
+    tier: "BASIC",
+    priceCHF: 10,
+    category: "Volume",
+    description: "Kauft nach extremen Sell-Offs bei Volumen-Peaks (V-Shape Reversals).",
+    riskLevel: "Medium",
+    recommendedMarkets: "ETH, SOL",
+    timeframe: "1H",
+    winRate: 59.5,
+    avgDrawdown: "-7.4%",
+    tradesCount: 520,
+    highlights: "Finde exakt die temporären Bodenspitzen.",
+    isAI: false
+  },
+
+  // 20 CHF / PRO TIER (7 Strategies)
+  {
+    id: "strat-smart-20",
+    name: "Smart Momentum Pro",
+    tier: "PRO",
+    priceCHF: 20,
+    category: "Momentum",
+    description: "Dynamischer Trailing-Stop und RSI-Filter filtern Fake-Outouts heraus.",
+    riskLevel: "Medium",
+    recommendedMarkets: "Top 5",
+    timeframe: "15m",
+    winRate: 64.8,
+    avgDrawdown: "-5.8%",
+    tradesCount: 1120,
+    highlights: "Sichere Profite dank dynamischem Trailing.",
+    isAI: false
+  },
+  {
+    id: "strat-multi-20",
+    name: "Multi EMA Trend Engine",
+    tier: "PRO",
+    priceCHF: 20,
+    category: "Trend Following",
+    description: "Nutzt 4 EMA-Bänder (Ribbon) zur exakten Trenderkennung. Perfekt für Krypto.",
+    riskLevel: "Low",
+    recommendedMarkets: "Top 20",
+    timeframe: "4H",
+    winRate: 61.2,
+    avgDrawdown: "-6.1%",
+    tradesCount: 460,
+    highlights: "Die sauberste Trenderkennung des Marktes.",
+    isAI: false
+  },
+  {
+    id: "strat-liq-20",
+    name: "Liquidity Reversal Pro",
+    tier: "PRO",
+    priceCHF: 20,
+    category: "Mean Reversion",
+    description: "Zielt auf Liquidity Grabs (Stop-Hunting Level) ab, um institutionelles Geld zu kopieren.",
+    riskLevel: "High",
+    recommendedMarkets: "All",
+    timeframe: "5m",
+    winRate: 68.4,
+    avgDrawdown: "-11.2%",
+    tradesCount: 2030,
+    highlights: "Profitiere von den Manipulationen der Wale.",
+    isAI: false
+  },
+  {
+    id: "strat-prec-20",
+    name: "ATR Precision Breakout",
+    tier: "PRO",
+    priceCHF: 20,
+    category: "Breakout",
+    description: "Verwendet ATR (Average True Range) für perfekte Stop-Loss-Platzierungen.",
+    riskLevel: "Medium",
+    recommendedMarkets: "BTC, Gold",
+    timeframe: "1H",
+    winRate: 62.0,
+    avgDrawdown: "-4.9%",
+    tradesCount: 512,
+    highlights: "Präzises Risikomanagement out-of-the-box.",
+    isAI: false
+  },
+  {
+    id: "strat-sess-20",
+    name: "Session Hunter",
+    tier: "PRO",
+    priceCHF: 20,
+    category: "Breakout",
+    description: "Profitiert von Volumen-Spikes bei US- und Asia-Session-Überschneidungen.",
+    riskLevel: "Low",
+    recommendedMarkets: "Forex, BTC",
+    timeframe: "15m",
+    winRate: 66.5,
+    avgDrawdown: "-3.2%",
+    tradesCount: 890,
+    highlights: "Handelt nur, wenn Volumen an der Wallstreet entsteht.",
+    isAI: false
+  },
+  {
+    id: "strat-vsync-20",
+    name: "Volume Sync Trader",
+    tier: "PRO",
+    priceCHF: 20,
+    category: "Volume",
+    description: "Vergleicht Spot-Volumen mit Derivate-Funding-Rates vor dem Einstieg.",
+    riskLevel: "Medium",
+    recommendedMarkets: "ETH, ADA",
+    timeframe: "1D",
+    winRate: 57.0,
+    avgDrawdown: "-5.5%",
+    tradesCount: 230,
+    highlights: "Kombiniert Derivat- und Spot-Markt-Daten.",
+    isAI: false
+  },
+  {
+    id: "strat-fib-20",
+    name: "Fibonacci Swing Pro",
+    tier: "PRO",
+    priceCHF: 20,
+    category: "Swing",
+    description: "Automatische Identifikation und Trades an Fib-Retracements (0.382 / 0.618).",
+    riskLevel: "Low",
+    recommendedMarkets: "Top 10",
+    timeframe: "4H",
+    winRate: 64.2,
+    avgDrawdown: "-4.8%",
+    tradesCount: 390,
+    highlights: "Perfektes Swing-Trading ohne ständigen Stopp.",
+    isAI: false
+  },
+
+  // 30 CHF / ELITE TIER (6 Strategies)
+  {
+    id: "strat-ai-x-30",
+    name: "AI Scalper X",
+    tier: "ELITE",
+    priceCHF: 30,
+    category: "AI / Scalp",
+    description: "Nutzt ein ML-Modell zur Orderbuch-Auswertung. Millisekunden-Entscheidungen.",
+    riskLevel: "High",
+    recommendedMarkets: "BTC/USDT",
+    timeframe: "1m",
+    winRate: 76.4,
+    avgDrawdown: "-18.5%",
+    tradesCount: 14500,
+    highlights: "Hochgeschwindigkeits-Arbitrage mit Deep Learning.",
+    isAI: true
+  },
+  {
+    id: "strat-neuro-30",
+    name: "Neuro Trend Matrix",
+    tier: "ELITE",
+    priceCHF: 30,
+    category: "AI / Trend",
+    description: "Kombiniert On-Chain-Datenbanken mit Preis-Action für extreme Genauigkeit.",
+    riskLevel: "Low",
+    recommendedMarkets: "Crypto All",
+    timeframe: "4H",
+    winRate: 68.1,
+    avgDrawdown: "-2.4%",
+    tradesCount: 312,
+    highlights: "Liest die Blockchain aus, bevor der Preis reagiert.",
+    isAI: true
+  },
+  {
+    id: "strat-quant-30",
+    name: "Quantum Reversal Engine",
+    tier: "ELITE",
+    priceCHF: 30,
+    category: "AI / Reversal",
+    description: "Quant-Modell, das Wahrscheinlichkeiten von lokalen Tops und Bottoms berechnet.",
+    riskLevel: "High",
+    recommendedMarkets: "Volatile",
+    timeframe: "5m",
+    winRate: 72.3,
+    avgDrawdown: "-9.8%",
+    tradesCount: 2100,
+    highlights: "Erkennt Tops und Bottoms fast punktgenau.",
+    isAI: true
+  },
+  {
+    id: "strat-inst-30",
+    name: "Institutional Flow AI",
+    tier: "ELITE",
+    priceCHF: 30,
+    category: "AI / OrderFlow",
+    description: "Analysiert Wal-Transaktionen und Orderbuch-Imbalances (Smart Money Concept).",
+    riskLevel: "Medium",
+    recommendedMarkets: "BTC, ETH",
+    timeframe: "15m",
+    winRate: 70.8,
+    avgDrawdown: "-4.2%",
+    tradesCount: 880,
+    highlights: "Handelt parallel mit institutionellem Geld.",
+    isAI: true
+  },
+  {
+    id: "strat-deep-30",
+    name: "Deep Momentum Predictor",
+    tier: "ELITE",
+    priceCHF: 30,
+    category: "AI / Momentum",
+    description: "Deep-Learning Sentimentanalyse gepaart mit RSI-Divergenzen.",
+    riskLevel: "High",
+    recommendedMarkets: "Top 100",
+    timeframe: "1H",
+    winRate: 67.9,
+    avgDrawdown: "-10.5%",
+    tradesCount: 1650,
+    highlights: "Versteht die Marktstimmung anhand globaler News in Echtzeit.",
+    isAI: true
+  },
+  {
+    id: "strat-adap-30",
+    name: "Adaptive Market Hunter",
+    tier: "ELITE",
+    priceCHF: 30,
+    category: "AI / Dynamic",
+    description: "Erkennt das Marktregime (Trend vs Chop) und wechselt die Sub-Strategie automatisch.",
+    riskLevel: "Low",
+    recommendedMarkets: "All",
+    timeframe: "Auto",
+    winRate: 74.0,
+    avgDrawdown: "-3.1%",
+    tradesCount: 4200,
+    highlights: "Die Non-Plus-Ultra Engine. Passt sich adaptiv an jede Marktphase an.",
+    isAI: true
+  }
+];
