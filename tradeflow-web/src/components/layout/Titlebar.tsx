@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import { Minimize2, Square, X, Maximize2 } from "lucide-react"
 import { usePlatform } from "../../hooks/usePlatform"
 
 export function Titlebar() {
