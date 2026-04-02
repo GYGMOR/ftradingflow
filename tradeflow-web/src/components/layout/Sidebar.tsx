@@ -87,8 +87,8 @@ export function Sidebar() {
         {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
       </button>
 
-      <div>
-        <div className={cn("h-[60px] flex items-center border-b border-slate-800 overflow-hidden", isSidebarCollapsed ? "justify-center px-0" : "px-6")}>
+      <div className="flex-1 overflow-y-auto overflow-x-hidden min-h-0 custom-scrollbar">
+        <div className={cn("h-[60px] flex items-center border-b border-slate-800 overflow-hidden shrink-0", isSidebarCollapsed ? "justify-center px-0" : "px-6")}>
           <div className={cn("w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-blue-400 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-indigo-500/30 shrink-0", !isSidebarCollapsed && "mr-3")}>
             TF
           </div>
@@ -233,39 +233,41 @@ export function Sidebar() {
             </div>
           )}
         </nav>
-
-        {/* DESKTOP APP CTA (Web Only) */}
-        {isWeb && !isSidebarCollapsed && (
-          <div className="mx-4 mt-6 p-4 rounded-2xl bg-gradient-to-br from-indigo-600/20 to-blue-600/20 border border-indigo-500/30">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 rounded-lg bg-indigo-500/20"><MonitorDown className="w-4 h-4 text-indigo-400" /></div>
-              <span className="text-[10px] font-black text-white uppercase tracking-widest">Desktop App</span>
-            </div>
-            <a 
-              href="http://localhost:5000/downloads/TradeFlow_Installer.exe" 
-              download
-              className="w-full py-2 bg-indigo-500 hover:bg-indigo-400 text-white text-[9px] font-black rounded-lg transition-colors uppercase tracking-wider block text-center cursor-pointer"
-            >
-              JETZT DOWNLOADEN
-            </a>
-          </div>
-        )}
-        
-        {isWeb && isSidebarCollapsed && (
-          <div className="flex justify-center mt-6">
-            <a 
-              href="http://localhost:5000/downloads/TradeFlow_Installer.exe" 
-              download
-              title="Desktop App herunterladen"
-              className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all cursor-pointer"
-            >
-              <MonitorDown className="w-5 h-5" />
-            </a>
-          </div>
-        )}
       </div>
 
-      <div className="p-3 space-y-4 border-t border-slate-800 mt-auto overflow-hidden">
+      <div className="p-3 space-y-4 border-t border-slate-800 shrink-0 bg-sidebar">
+        {/* DESKTOP APP CTA (Web Only) */}
+        {isWeb && (
+          <div className="mb-2">
+            {!isSidebarCollapsed ? (
+              <div className="p-3 rounded-xl bg-gradient-to-br from-indigo-600/10 to-blue-600/10 border border-indigo-500/20">
+                <div className="flex items-center gap-2 mb-2">
+                  <MonitorDown className="w-3.5 h-3.5 text-indigo-400" />
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Desktop Required</span>
+                </div>
+                <a 
+                  href="http://localhost:5000/downloads/TradeFlow_Installer.exe" 
+                  download
+                  className="w-full py-1.5 bg-indigo-500 hover:bg-indigo-400 text-white text-[9px] font-black rounded-lg transition-colors uppercase tracking-wider block text-center"
+                >
+                  DOWNLOAD APP
+                </a>
+              </div>
+            ) : (
+              <div className="flex justify-center">
+                <a 
+                  href="http://localhost:5000/downloads/TradeFlow_Installer.exe" 
+                  download
+                  title="Desktop App herunterladen"
+                  className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all"
+                >
+                  <MonitorDown className="w-5 h-5" />
+                </a>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className={cn("flex items-center justify-between", isSidebarCollapsed ? "justify-center flex-col space-y-2 h-[40px]" : "px-2")}>
           {!isSidebarCollapsed && <span className="text-xs font-semibold text-slate-500 tracking-wider">BOT STATUS</span>}
           <div className={cn("text-xs font-black flex items-center", botActive ? "text-emerald-500" : "text-rose-500")} title={isSidebarCollapsed ? (botActive ? "Bot Aktiv" : "Bot Pausiert") : undefined}>
@@ -288,30 +290,33 @@ export function Sidebar() {
           <Switch checked={isDark} onCheckedChange={toggleTheme} className={isSidebarCollapsed ? "scale-75" : ""} />
         </div>
 
-        <div className={cn("flex items-center pt-2", isSidebarCollapsed ? "justify-center" : "")}>
-          <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-white font-bold shrink-0 shadow-sm overflow-hidden">
-            {user?.avatarUrl ? (
-              <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-            ) : (
-              (user?.fullName || "AU").substring(0, 2).toUpperCase()
+        {/* User Profile (Desktop Only) */}
+        {!isWeb && (
+          <div className={cn("flex items-center pt-2 border-t border-slate-800/50 mt-2", isSidebarCollapsed ? "justify-center" : "")}>
+            <div className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-white font-bold shrink-0 shadow-sm overflow-hidden">
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                (user?.fullName || "AU").substring(0, 2).toUpperCase()
+              )}
+            </div>
+            {!isSidebarCollapsed && (
+              <>
+                <div className="ml-3 flex-1 overflow-hidden">
+                  <p className="text-sm font-bold text-white truncate">{user?.fullName || "Admin User"}</p>
+                  <p className="text-[11px] font-medium text-slate-500 truncate">{user?.email || "admin@tradeflow.io"}</p>
+                </div>
+                <button 
+                  onClick={logout}
+                  className="text-slate-500 hover:text-rose-500 p-1.5 rounded-md hover:bg-rose-500/10 transition-colors shrink-0"
+                  title="Abmelden"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </>
             )}
           </div>
-          {!isSidebarCollapsed && (
-            <>
-              <div className="ml-3 flex-1 overflow-hidden">
-                <p className="text-sm font-bold text-white truncate">{user?.fullName || "Admin User"}</p>
-                <p className="text-[11px] font-medium text-slate-500 truncate">{user?.email || "admin@tradeflow.io"}</p>
-              </div>
-              <button 
-                onClick={logout}
-                className="text-slate-500 hover:text-rose-500 p-1.5 rounded-md hover:bg-rose-500/10 transition-colors shrink-0"
-                title="Abmelden"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </>
-          )}
-        </div>
+        )}
       </div>
 
       <PremiumTeaserModal 
