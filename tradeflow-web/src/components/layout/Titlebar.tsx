@@ -33,7 +33,7 @@ export function Titlebar() {
   return (
     <div 
       data-tauri-drag-region
-      className="h-[40px] bg-[#0A0D14] border-b border-white/5 flex items-center justify-between px-4 select-none fixed top-0 inset-x-0 z-[9999] backdrop-blur-md"
+      className="h-[40px] bg-[#0A0D14]/80 border-b border-white/10 flex items-center justify-between px-4 select-none fixed top-0 inset-x-0 z-[999999] backdrop-blur-xl shadow-lg ring-1 ring-white/5"
     >
       {/* Platform Branding */}
       <div className="flex items-center gap-3 pointer-events-none">

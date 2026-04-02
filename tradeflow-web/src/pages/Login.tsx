@@ -32,11 +32,11 @@ export default function Login() {
   };
 
   const handleSSO = (provider: "google" | "microsoft") => {
-    window.location.href = `http://localhost:5000/auth/${provider}`;
+    window.location.href = `http://127.0.0.1:5000/auth/${provider}`;
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0E17] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[#0B0E17] flex items-center justify-center p-4 pt-[40px] relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
