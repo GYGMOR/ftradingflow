@@ -50,23 +50,43 @@ export function Titlebar() {
 
       {/* Window Controls */}
       <div className="flex items-center">
+        {/* Minimize */}
         <button 
           onClick={handleMinimize}
-          className="w-10 h-[40px] flex items-center justify-center text-slate-500 hover:bg-white/5 hover:text-white transition-colors"
+          className="w-[46px] h-[40px] flex items-center justify-center text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+          title="Minimieren"
         >
-          <Minimize2 className="w-3.5 h-3.5" />
+          <svg width="10" height="1" viewBox="0 0 10 1" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="10" height="1" fill="currentColor"/>
+          </svg>
         </button>
+
+        {/* Maximize / Restore */}
         <button 
           onClick={handleMaximize}
-          className="w-10 h-[40px] flex items-center justify-center text-slate-500 hover:bg-white/5 hover:text-white transition-colors"
+          className="w-[46px] h-[40px] flex items-center justify-center text-white/70 hover:bg-white/10 hover:text-white transition-colors"
+          title={isMaximized ? "Verkleinern" : "Maximieren"}
         >
-          {isMaximized ? <Square className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+          {isMaximized ? (
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2.5 1.5V2.5H1.5V8.5H7.5V7.5H8.5V1.5H2.5ZM7.5 2.5V7.5H2.5V2.5H7.5Z" fill="currentColor"/>
+            </svg>
+          ) : (
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="0.5" y="0.5" width="9" height="9" stroke="currentColor"/>
+            </svg>
+          )}
         </button>
+
+        {/* Close */}
         <button 
           onClick={handleClose}
-          className="w-10 h-[40px] flex items-center justify-center text-slate-500 hover:bg-rose-500/20 hover:text-rose-500 transition-colors"
+          className="w-[46px] h-[40px] flex items-center justify-center text-white/70 hover:bg-[#c42b1c] hover:text-white transition-colors"
+          title="Schließen"
         >
-          <X className="w-3.5 h-3.5" />
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0.7L0.7 0L5 4.3L9.3 0L10 0.7L5.7 5L10 9.3L9.3 10L5 5.7L0.7 10L0 9.3L4.3 5L0 0.7Z" fill="currentColor"/>
+          </svg>
         </button>
       </div>
     </div>
