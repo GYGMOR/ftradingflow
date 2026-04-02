@@ -7,7 +7,8 @@ export function usePlatform() {
 
   useEffect(() => {
     // Check for Tauri global (Native Desktop)
-    if (typeof window !== 'undefined' && (window as any).__TAURI_METADATA__ || (window as any).__TAURI__) {
+    const isTauri = (window as any).__TAURI_METADATA__ || (window as any).__TAURI__ || navigator.userAgent.includes('Tauri');
+    if (typeof window !== 'undefined' && isTauri) {
       setPlatform('desktop');
     } else {
       setPlatform('web');
