@@ -53,3 +53,11 @@ jobs:
           releaseDraft: true
           prerelease: false
           projectPath: tradeflow-web
+
+      - name: Upload Artifacts (for easy download)
+        uses: actions/upload-artifact@v4
+        with:
+          name: TradeFlow-Installers
+          path: |
+            tradeflow-web/src-tauri/target/release/bundle/msi/*.msi
+            tradeflow-web/src-tauri/target/release/bundle/exe/*.exe
