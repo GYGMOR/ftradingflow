@@ -1,28 +1,54 @@
 import struct
-import os
 
-png_path = r"C:\Users\joel.hediger\.gemini\antigravity\brain\71c40b74-ddb8-42eb-b837-346146bd7630\tradeflow_app_icon_1775146010442.png"
 ico_path = r"D:\Joel\trading-web\tradeflow-web\src-tauri\icons\icon.ico"
 
-with open(png_path, "rb") as f:
-    png_data = f.read()
+# 32x32 icon, 32 bits per pixel (BGRA)
+width = 32
+height = 32
 
-# ICO Header
-header = struct.pack("<HHH", 0, 1, 1) # Reserved, Type 1 (ICO), Count 1
+# Build XOR mask (pixel data)
+# We'll make a solid indigo block (TradeFlow color: #6366f1 -> BGRA: f1 66 63 ff)
+pixel_data = bytearray()
+for _ in range(width * height):
+    pixel_data.extend([0xf1, 0x66, 0x63, 0xff])
 
-# ICONDIRENTRY (32x32, we just tell Windows it's 32x32 to satisfy the compiler even if PNG is 1024x1024)
-# Windows ICON compiler allows PNG-encoded icons in v3 format if header is correct.
-entry = struct.pack(
-    "BBBBHHII", 
-    32, 128, 0, 0, # Width, Height (0=256), Colors, Reserved
-    1, 32, # Planes, BPP
-    len(png_data), # Size
-    22 # Offset (6 header + 16 entry)
+# Build AND mask (transparency - 0 means opaque)
+# 32x32 bits = 1024 bits = 128 bytes
+and_mask = bytearray([0x00] * 128)
+
+# BITMAPINFOHEADER (40 bytes)
+# Note: Height is 2 * height for icons (XOR + AND masks)
+bih = struct.pack(
+    "<IiiHHIIiiII",
+    40,        # biSize
+    width,     # biWidth
+    height * 2,# biHeight
+    1,         # biPlanes
+    32,        # biBitCount
+    0,         # biCompression (BI_RGB)
+    len(pixel_data) + len(and_mask), # biSizeImage
+    0, 0, 0, 0 # biXPelsPerMeter, biYPelsPerMeter, biClrUsed, biClrImportant
+)
+
+# ICONDIR (6 bytes)
+icondir = struct.pack("<HHH", 0, 1, 1)
+
+# ICONDIRENTRY (16 bytes)
+# Size is bih + pixel_data + and_mask
+image_size = len(bih) + len(pixel_data) + len(and_mask)
+iconentry = struct.pack(
+    "BBBBHHII",
+    width, height, 0, 0,
+    1, 32,
+    image_size,
+    22 # Offset (6 + 16)
 )
 
 with open(ico_path, "wb") as f:
-    f.write(header)
-    f.write(entry)
-    f.write(png_data)
+    f.write(icondir)
+    f.write(iconentry)
+    f.write(bih)
+    f.write(pixel_data)
+    f.write(and_mask)
 
-print(f"✅ Successfully converted PNG to valid ICO at {ico_path}")
+print(f"✅ Created a legacy-compatible 32x32 BMP-encoded ICO at {ico_path}")
